@@ -109,7 +109,7 @@ class HttpPrivate(HttpPublic):
             }
         )
 
-    def register_user(
+    async def register_user(
             self,
             nonce,
             starkKey=None,
@@ -141,7 +141,7 @@ class HttpPrivate(HttpPublic):
             )
 
         eth_address = ethereum_address or self.default_address
-        signature = self.signer.sign(
+        signature = await self.signer.sign(
             eth_address,
             action=OFF_CHAIN_ONBOARDING_ACTION,
             nonce=nonce,
@@ -172,7 +172,7 @@ class HttpPrivate(HttpPublic):
             self.account = onboardingRes.get('data').get('account')
         return onboardingRes
 
-    def register_user_v2(
+    async def register_user_v2(
             self,
             nonce,
             starkKey=None,
@@ -205,7 +205,7 @@ class HttpPrivate(HttpPublic):
             )
 
         eth_address = ethereum_address or self.default_address
-        signature = self.signer.sign(
+        signature = await self.signer.sign(
             eth_address,
             action=OFF_CHAIN_ONBOARDING_ACTION,
             nonce=nonce,
@@ -237,11 +237,11 @@ class HttpPrivate(HttpPublic):
             self.account = onboardingRes.get('data').get('account')
         return onboardingRes
 
-    def derive_stark_key(
+    async def derive_stark_key(
             self,
             ethereum_address=None,
     ):
-        signature = self.starkeySigner.sign_message(
+        signature = await self.starkeySigner.sign_message(
             ethereum_address or self.default_address,
             action=OFF_CHAIN_KEY_DERIVATION_ACTION,
             )
@@ -258,7 +258,7 @@ class HttpPrivate(HttpPublic):
             'private_key': private_key_hex
         }
 
-    def recover_api_key_credentials(
+    async def recover_api_key_credentials(
             self,
             nonce,
             ethereum_address=None,
@@ -266,7 +266,7 @@ class HttpPrivate(HttpPublic):
         '''
         Derive API credentials deterministically from an Ethereum key.
         '''
-        signature = self.signer.sign(
+        signature = await self.signer.sign(
             ethereum_address or self.default_address,
             action=OFF_CHAIN_ONBOARDING_ACTION,
             nonce=nonce,

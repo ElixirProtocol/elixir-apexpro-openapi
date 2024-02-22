@@ -28,21 +28,21 @@ class SignOffChainAction(object):
     def get_eip712_struct_name(self):
         raise NotImplementedError
 
-    def sign(
+    async def sign(
         self,
         signer_address,
         **message,
     ):
         eip712_message = self.get_eip712_message(**message)
         message_hash = self.get_hash(**message)
-        typed_signature = self.signer.sign(
+        typed_signature = await self.signer.sign(
             eip712_message,
             message_hash,
             signer_address,
         )
         return typed_signature
 
-    def sign_message(
+    async def sign_message(
             self,
             signer_address,
             **message,
@@ -54,7 +54,7 @@ class SignOffChainAction(object):
             key=x[0], value=x[1]) for x in eip712_message.items())
 
         message_hash = util.hash_person(msgStr)
-        typed_signature = self.signer.sign_person(
+        typed_signature = await self.signer.sign_person(
             eip712_message,
             message_hash,
             signer_address,

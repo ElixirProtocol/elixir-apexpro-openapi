@@ -24,6 +24,7 @@ import requests
 from web3 import Web3
 from apexpro.eth_signing import SignWithWeb3, SignOnboardingAction
 from apexpro.eth_signing import SignWithKey
+from apexpro.eth_signing import SignWithHSM
 from apexpro.constants import REGISTER_ENVID_MAIN, APEX_HTTP_MAIN, URL_SUFFIX, NETWORKID_MAIN
 from apexpro.starkex.helpers import private_key_to_public_key_pair_hex
 
@@ -69,6 +70,7 @@ class HTTP:
             endpoint,
             api_timeout=3000,  # TODO: Actually use this.
             default_ethereum_address=None,
+            hsm_instance=None,
             eth_private_key=None,
             eth_send_options=None,
             network_id=NETWORKID_MAIN,
@@ -141,6 +143,10 @@ class HTTP:
             # May override web3 or web3_provider configuration.
             key = eth_private_key or web3_account.key
             self.eth_signer = SignWithKey(key)
+            self.default_address = self.eth_signer.address
+
+        if hsm_instance is not None:
+            self.eth_signer = SignWithHSM(hsm_instance)
             self.default_address = self.eth_signer.address
 
         self.default_address = default_ethereum_address or self.default_address

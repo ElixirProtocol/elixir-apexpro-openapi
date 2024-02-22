@@ -2,6 +2,7 @@ import eth_account
 
 from apexpro.constants import SIGNATURE_TYPE_NO_PREPEND, SIGNATURE_TYPE_PERSONAL
 from apexpro.eth_signing import util
+from apexpro.eth_signing.hsm import HSMSigner
 
 
 class Signer(object):
@@ -31,6 +32,38 @@ class Signer(object):
         '''
         raise NotImplementedError()
 
+class SignWithHSM(Signer):
+    def __init__(self, hsm_instance: HSMSigner) -> None:
+        self._hsm = hsm_instance
+        self.address = self._hsm.address
+
+    async def sign(
+        self,
+        eip712_message, # Ignored
+        message_hash,
+        opt_signer_address,
+    ):
+        raw_signature = await self._hsm.sign(message_hash)
+        ethereum_signature, _, _ = self._hsm.adjust_and_recover_signature(message_hash, raw_signature)
+        typed_signature = util.create_typed_signature(
+            ethereum_signature.hex(),
+            SIGNATURE_TYPE_NO_PREPEND,
+        )
+        return typed_signature
+    
+    async def sign_person(
+            self,
+            eip712_message,  # Ignored.
+            message_hash,
+            opt_signer_address,
+    ):
+        raw_signature = await self._hsm.sign(message_hash)
+        ethereum_signature, _, _ = self._hsm.adjust_and_recover_signature(message_hash, raw_signature)
+        typed_signature = util.create_typed_signature(
+            ethereum_signature.hex(),
+            SIGNATURE_TYPE_PERSONAL,
+        )
+        return typed_signature
 
 class SignWithWeb3(Signer):
 
