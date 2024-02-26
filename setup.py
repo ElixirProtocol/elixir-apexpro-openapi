@@ -37,7 +37,7 @@ setup(
         'websocket-client',
         'websockets',
         'dateparser==1.0.0',
-        'ecdsa==0.16.0',
+        'ecdsa>=0.17.0',
         'eth_keys',
         'eth-account>=0.4.0,<0.6.0',
         'mpmath==1.0.0',
