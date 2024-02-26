@@ -16,7 +16,7 @@ from apexpro.starkex.order import SignableOrder, DECIMAL_CONTEXT_ROUND_UP, DECIM
 
 
 class HttpPrivate(HttpPublic):
-    def _private_request(
+    async def _private_request(
             self,
             method,
             path,
@@ -37,21 +37,21 @@ class HttpPrivate(HttpPublic):
                 'APEX-TIMESTAMP': str(now_iso),
                 'APEX-PASSPHRASE': self.api_key_credentials.get('passphrase'),
             }
-        return self._submit_request(
+        return await self._submit_request(
             method=method,
             path=self.endpoint + path,
             headers=headers,
             query=data,
         )
 
-    def _get(self, endpoint, params):
-        return self._private_request(
+    async def _get(self, endpoint, params):
+        return await self._private_request(
             'GET',
             generate_query_path(endpoint, params),
         )
 
-    def _post(self, endpoint, data, headers=None):
-        return self._private_request(
+    async def _post(self, endpoint, data, headers=None):
+        return await self._private_request(
             'POST',
             endpoint,
             data,
@@ -86,7 +86,7 @@ class HttpPrivate(HttpPublic):
         )
         return base64.standard_b64encode(hashed.digest()).decode()
 
-    def generate_nonce(self, starkKey, ethAddress, chainId,
+    async def generate_nonce(self, starkKey, ethAddress, chainId,
                        refresh="false"
                        ):
         """"
@@ -97,7 +97,7 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/generate-nonce"
-        return self._private_request(
+        return await self._private_request(
             method="POST",
             path=path,
             data={
@@ -148,7 +148,7 @@ class HttpPrivate(HttpPublic):
         )
 
         path = URL_SUFFIX + "/v1/onboarding"
-        onboardingRes = self._private_request(
+        onboardingRes = await self._private_request(
             method="POST",
             path=path,
             data= {
@@ -212,7 +212,7 @@ class HttpPrivate(HttpPublic):
         )
 
         path = URL_SUFFIX + "/v2/onboarding"
-        onboardingRes = self._private_request(
+        onboardingRes = await self._private_request(
             method="POST",
             path=path,
             data= {
@@ -296,7 +296,7 @@ class HttpPrivate(HttpPublic):
             'passphrase': base64.urlsafe_b64encode(passphrase_bytes).decode(),
         }
 
-    def user(self, **kwargs):
+    async def user(self, **kwargs):
         """"
         GET Retrieve User Data.
         :param kwargs: See
@@ -305,14 +305,14 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/user"
-        userRes = self._get(
+        userRes = await self._get(
             endpoint=path,
             params=kwargs
         )
         self.user = userRes.get('data')
         return userRes
 
-    def get_user(self, **kwargs):
+    async def get_user(self, **kwargs):
         """"
         GET Retrieve User Data.
         :param kwargs: See
@@ -321,7 +321,7 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/user"
-        userRes = self._get(
+        userRes = await self._get(
             endpoint=path,
             params=kwargs
         )
@@ -329,7 +329,7 @@ class HttpPrivate(HttpPublic):
         return userRes
 
 
-    def modify_user(self, **kwargs):
+    async def modify_user(self, **kwargs):
         """"
         POST Edit User Data.
         :param kwargs: See
@@ -339,12 +339,12 @@ class HttpPrivate(HttpPublic):
 
         path = URL_SUFFIX + "/v1/modify-user"
 
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=kwargs
         )
 
-    def account(self, **kwargs):
+    async def account(self, **kwargs):
         """"
         GET Retrieve User Account Data.
         :param kwargs: See
@@ -353,14 +353,14 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/account"
-        accountRes =  self._get(
+        accountRes = await self._get(
             endpoint=path,
             params=kwargs
         )
         self.account = accountRes.get('data')
         return accountRes
 
-    def get_account(self, **kwargs):
+    async def get_account(self, **kwargs):
         """"
         GET Retrieve User Account Data.
         :param kwargs: See
@@ -369,14 +369,14 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/account"
-        accountRes =  self._get(
+        accountRes = await self._get(
             endpoint=path,
             params=kwargs
         )
         self.account = accountRes.get('data')
         return accountRes
 
-    def get_account_v2(self, **kwargs):
+    async def get_account_v2(self, **kwargs):
         """"
         GET Retrieve User Account Data.
         :param kwargs: See
@@ -385,14 +385,14 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/account"
-        accountRes =  self._get(
+        accountRes = await self._get(
             endpoint=path,
             params=kwargs
         )
         self.account = accountRes.get('data')
         return accountRes
 
-    def transfers(self, **kwargs):
+    async def transfers(self, **kwargs):
         """"
         GET Retrieve User Deposit Data.
         :param kwargs: See
@@ -401,12 +401,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/transfers"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def transfers_v2(self, **kwargs):
+    async def transfers_v2(self, **kwargs):
         """"
         GET Retrieve User Deposit Data.
         :param kwargs: See
@@ -415,12 +415,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/transfers"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def withdraw_list(self, **kwargs):
+    async def withdraw_list(self, **kwargs):
         """"
         GET Retrieve User Withdrawal List.
         :param kwargs: See
@@ -429,11 +429,11 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/withdraw-list"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
-    def withdraw_list_v2(self, **kwargs):
+    async def withdraw_list_v2(self, **kwargs):
         """"
         GET Retrieve User Withdrawal List.
         :param kwargs: See
@@ -442,11 +442,11 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/withdraw-list"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
-    def uncommon_withdraw_fee(self, **kwargs):
+    async def uncommon_withdraw_fee(self, **kwargs):
         """"
         GET Fast & Cross-Chain Withdrawal Fees.
         :param kwargs: See
@@ -455,12 +455,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/uncommon-withdraw-fee"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def uncommon_withdraw_fee_v2(self, **kwargs):
+    async def uncommon_withdraw_fee_v2(self, **kwargs):
         """"
         GET Fast & Cross-Chain Withdrawal Fees.
         :param kwargs: See
@@ -469,12 +469,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/uncommon-withdraw-fee"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def transfer_limit(self, **kwargs):
+    async def transfer_limit(self, **kwargs):
         """"
         GET Retrieve Withdrawal & Transfer Limits.
         :param kwargs: See
@@ -483,12 +483,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/transfer-limit"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def transfer_limit_v2(self, **kwargs):
+    async def transfer_limit_v2(self, **kwargs):
         """"
         GET Retrieve Withdrawal & Transfer Limits.
         :param kwargs: See
@@ -497,12 +497,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/transfer-limit"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def fills(self, **kwargs):
+    async def fills(self, **kwargs):
         """"
         GET Retrieve Trade History.
         :param kwargs: See
@@ -511,12 +511,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/fills"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def fills_v2(self, **kwargs):
+    async def fills_v2(self, **kwargs):
         """"
         GET Retrieve Trade History.
         :param kwargs: See
@@ -525,20 +525,20 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/fills"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def order_fills_v2(self, **kwargs):
+    async def order_fills_v2(self, **kwargs):
 
         path = URL_SUFFIX + "/v2/order-fills"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def delete_order(self, **kwargs):
+    async def delete_order(self, **kwargs):
         """"
         POST Cancel Order.
         :param kwargs: See
@@ -547,13 +547,13 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/delete-order"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=kwargs
         )
 
 
-    def delete_order_v2(self, **kwargs):
+    async def delete_order_v2(self, **kwargs):
         """"
         POST Cancel Order.
         :param kwargs: See
@@ -562,12 +562,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/delete-order"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=kwargs
         )
 
-    def delete_order_by_client_order_id(self, **kwargs):
+    async def delete_order_by_client_order_id(self, **kwargs):
         """"
         POST Cancel Order.
         :param kwargs: See
@@ -576,11 +576,11 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/delete-client-order-id"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=kwargs
         )
-    def delete_order_by_client_order_id_v2(self, **kwargs):
+    async def delete_order_by_client_order_id_v2(self, **kwargs):
         """"
         POST Cancel Order.
         :param kwargs: See
@@ -589,12 +589,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/delete-client-order-id"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=kwargs
         )
 
-    def delete_open_orders(self, **kwargs):
+    async def delete_open_orders(self, **kwargs):
         """"
         POST Cancel all Open Orders
         :param kwargs: See
@@ -603,12 +603,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/delete-open-orders"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=kwargs
         )
 
-    def delete_open_orders_v2(self, **kwargs):
+    async def delete_open_orders_v2(self, **kwargs):
         """"
         POST Cancel all Open Orders
         :param kwargs: See
@@ -617,11 +617,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/delete-open-orders"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=kwargs
         )
-    def open_orders(self, **kwargs):
+
+    async def open_orders(self, **kwargs):
         """"
         GET Retrieve Open Orders.
         :param kwargs: See
@@ -630,12 +631,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/open-orders"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def open_orders_v2(self, **kwargs):
+    async def open_orders_v2(self, **kwargs):
         """"
         GET Retrieve Open Orders.
         :param kwargs: See
@@ -644,12 +645,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/open-orders"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def history_orders(self, **kwargs):
+    async def history_orders(self, **kwargs):
         """"
         GET Retrieve All Order History.
         :param kwargs: See
@@ -658,12 +659,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/history-orders"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def history_orders_v2(self, **kwargs):
+    async def history_orders_v2(self, **kwargs):
         """"
         GET Retrieve All Order History.
         :param kwargs: See
@@ -672,12 +673,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/history-orders"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def get_order(self, **kwargs):
+    async def get_order(self, **kwargs):
         """"
         GET Retrieve Order ID.
         :param kwargs: See
@@ -686,12 +687,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/get-order"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def get_order_v2(self, **kwargs):
+    async def get_order_v2(self, **kwargs):
         """"
         GET Retrieve Order ID.
         :param kwargs: See
@@ -700,12 +701,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/get-order"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def get_order_by_client_order_id(self, **kwargs):
+    async def get_order_by_client_order_id(self, **kwargs):
         """"
         GET Retrieve Order ID.
         :param kwargs: See
@@ -714,12 +715,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/order-by-client-id"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def get_order_by_client_order_id_v2(self, **kwargs):
+    async def get_order_by_client_order_id_v2(self, **kwargs):
         """"
         GET Retrieve Order ID.
         :param kwargs: See
@@ -728,12 +729,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/order-by-client-id"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def funding(self, **kwargs):
+    async def funding(self, **kwargs):
         """"
         GET Retrieve Funding Rate.
         :param kwargs: See
@@ -742,12 +743,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/funding"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def funding_v2(self, **kwargs):
+    async def funding_v2(self, **kwargs):
         """"
         GET Retrieve Funding Rate.
         :param kwargs: See
@@ -756,12 +757,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/funding"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def notify_list(self, **kwargs):
+    async def notify_list(self, **kwargs):
         """"
         GET Retrieve Notification List.
         :param kwargs: See
@@ -770,12 +771,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/notify-list"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def mark_notify_read(self, **kwargs):
+    async def mark_notify_read(self, **kwargs):
         """"
         POST Mark Notification As Read.
         :param kwargs: See
@@ -784,12 +785,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/mark-notify-read"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=kwargs
         )
 
-    def historical_pnl(self, **kwargs):
+    async def historical_pnl(self, **kwargs):
         """"
         GET Retrieve User Historial Profit and Loss.
         :param kwargs: See
@@ -798,12 +799,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/historical-pnl"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def historical_pnl_v2(self, **kwargs):
+    async def historical_pnl_v2(self, **kwargs):
         """"
         GET Retrieve User Historial Profit and Loss.
         :param kwargs: See
@@ -812,12 +813,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/historical-pnl"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def yesterday_pnl(self, **kwargs):
+    async def yesterday_pnl(self, **kwargs):
         """"
         GET Retrieve Yesterday's Profit & Loss.
         :param kwargs: See
@@ -826,12 +827,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/yesterday-pnl"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def yesterday_pnl_v2(self, **kwargs):
+    async def yesterday_pnl_v2(self, **kwargs):
         """"
         GET Retrieve Yesterday's Profit & Loss.
         :param kwargs: See
@@ -840,12 +841,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/yesterday-pnl"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def history_value(self, **kwargs):
+    async def history_value(self, **kwargs):
         """"
         GET Retrieve Historical Asset Value.
         :param kwargs: See
@@ -854,12 +855,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/history-value"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def history_value_v2(self, **kwargs):
+    async def history_value_v2(self, **kwargs):
         """"
         GET Retrieve Historical Asset Value.
         :param kwargs: See
@@ -868,12 +869,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/history-value"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def mark_all_notify_read(self, **kwargs):
+    async def mark_all_notify_read(self, **kwargs):
         """"
         POST Mark All Notifications As Read.
         :param kwargs: See
@@ -882,12 +883,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/mark-all-notify-read"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=kwargs
         )
 
-    def mark_all_notify_read(self, **kwargs):
+    async def mark_all_notify_read(self, **kwargs):
         """"
         POST Mark All Notifications As Read.
         :param kwargs: See
@@ -896,12 +897,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/mark-all-notify-read"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=kwargs
         )
 
-    def get_worst_price(self, **kwargs):
+    async def get_worst_price(self, **kwargs):
         """"
         get market price from orderbook
         :param kwargs: See
@@ -910,12 +911,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/get-worst-price"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def get_order_by_client_id(self, **kwargs):
+    async def get_order_by_client_id(self, **kwargs):
         """"
         get market price from orderbook
         :param kwargs: See
@@ -924,12 +925,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/order-by-client-id"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def get_account_balance(self, **kwargs):
+    async def get_account_balance(self, **kwargs):
         """"
         get market price from orderbook
         :param kwargs: See
@@ -938,12 +939,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/account-balance"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def get_account_balance_v2(self, **kwargs):
+    async def get_account_balance_v2(self, **kwargs):
         """"
         get market price from orderbook
         :param kwargs: See
@@ -952,12 +953,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/account-balance"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def gray_status(self, **kwargs):
+    async def gray_status(self, **kwargs):
         """"
         get market price from orderbook
         :param kwargs: See
@@ -966,12 +967,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/gray-status"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )
 
-    def set_initial_margin_rate(self, **kwargs):
+    async def set_initial_margin_rate(self, **kwargs):
         """"
         get market price from orderbook
         :param kwargs: See
@@ -980,12 +981,12 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v1/set-initial-margin-rate"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=kwargs
         )
 
-    def set_initial_margin_rate_v2(self, **kwargs):
+    async def set_initial_margin_rate_v2(self, **kwargs):
         """"
         get market price from orderbook
         :param kwargs: See
@@ -994,15 +995,15 @@ class HttpPrivate(HttpPublic):
         """
 
         path = URL_SUFFIX + "/v2/set-initial-margin-rate"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=kwargs
         )
 
-    def all_favorites(self, **kwargs):
+    async def all_favorites(self, **kwargs):
 
         path = URL_SUFFIX + "/v1/all-favorites"
-        return self._get(
+        return await self._get(
             endpoint=path,
             params=kwargs
         )

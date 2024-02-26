@@ -58,7 +58,9 @@ class SignWithHSM(Signer):
             opt_signer_address,
     ):
         raw_signature = await self._hsm.sign(message_hash)
-        ethereum_signature, _, _ = self._hsm.adjust_and_recover_signature(message_hash, raw_signature)
+        ethereum_signature, recovered_address, _ = self._hsm.adjust_and_recover_signature(message_hash, raw_signature)
+        print("ethereum_signature: ", ethereum_signature.hex())
+        print("recovered address: ", recovered_address)
         typed_signature = util.create_typed_signature(
             ethereum_signature.hex(),
             SIGNATURE_TYPE_PERSONAL,
@@ -98,7 +100,7 @@ class SignWithKey(Signer):
         self.address = eth_account.Account.from_key(private_key).address
         self._private_key = private_key
 
-    def sign(
+    async def sign(
         self,
         eip712_message,  # Ignored.
         message_hash,
@@ -125,7 +127,7 @@ class SignWithKey(Signer):
         )
         return typed_signature
 
-    def sign_person(
+    async def sign_person(
             self,
             eip712_message,  # Ignored.
             message_hash,
@@ -147,8 +149,11 @@ class SignWithKey(Signer):
             message_hash.hex(),
             self._private_key,
         )
+        print("signed_message", signed_message)
+        print("message_hash.hex()", message_hash.hex())
         typed_signature = util.create_typed_signature(
             signed_message.signature.hex(),
             SIGNATURE_TYPE_PERSONAL,
         )
+        print("typed_signature", typed_signature)
         return typed_signature

@@ -14,7 +14,7 @@ from apexpro.starkex.withdrawal import SignableWithdrawal
 
 
 class HttpPrivateStark(HttpPrivate):
-    def create_order(self,
+    async def create_order(self,
                      symbol,
                      side,
                      type,
@@ -266,12 +266,12 @@ class HttpPrivateStark(HttpPrivate):
         }
 
         path = URL_SUFFIX + "/v1/create-order"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=order
         )
 
-    def create_order_v2(self,
+    async def create_order_v2(self,
                      symbol,
                      side,
                      type,
@@ -528,12 +528,12 @@ class HttpPrivateStark(HttpPrivate):
         }
 
         path = URL_SUFFIX + "/v2/create-order"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=order
         )
 
-    def create_withdrawal(self,
+    async def create_withdrawal(self,
                           amount,
                           asset,
                           accountId=None,
@@ -616,12 +616,12 @@ class HttpPrivateStark(HttpPrivate):
         }
 
         path = URL_SUFFIX + "/v1/create-withdrawal-to-address"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=withdraw
         )
 
-    def create_withdrawal_v2(self,
+    async def create_withdrawal_v2(self,
                           amount,
                           asset,
                           accountId=None,
@@ -704,12 +704,12 @@ class HttpPrivateStark(HttpPrivate):
         }
 
         path = URL_SUFFIX + "/v2/create-withdrawal-to-address"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=withdraw
         )
 
-    def fast_withdrawal(self,
+    async def fast_withdrawal(self,
                         amount,
                         asset,
                         accountId=None,
@@ -821,12 +821,12 @@ class HttpPrivateStark(HttpPrivate):
         }
 
         path = URL_SUFFIX + "/v1/fast-withdraw"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=withdraw
         )
 
-    def fast_withdrawal_v2(self,
+    async def fast_withdrawal_v2(self,
                         amount,
                         asset,
                         accountId=None,
@@ -938,12 +938,12 @@ class HttpPrivateStark(HttpPrivate):
         }
 
         path = URL_SUFFIX + "/v2/fast-withdraw"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=withdraw
         )
 
-    def cross_chain_withdraw(self,
+    async def cross_chain_withdraw(self,
                              amount,
                              asset,
                              chainId,
@@ -1032,12 +1032,12 @@ class HttpPrivateStark(HttpPrivate):
             'chainId': chainId
         }
         path = URL_SUFFIX + "/v1/cross-chain-withdraw"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=withdraw
         )
 
-    def cross_chain_withdraw_v2(self,
+    async def cross_chain_withdraw_v2(self,
                              amount,
                              asset,
                              chainId,
@@ -1126,7 +1126,7 @@ class HttpPrivateStark(HttpPrivate):
             'chainId': chainId
         }
         path = URL_SUFFIX + "/v2/cross-chain-withdraw"
-        return self._post(
+        return await self._post(
             endpoint=path,
             data=withdraw
         )

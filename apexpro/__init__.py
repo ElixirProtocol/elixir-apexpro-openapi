@@ -15,10 +15,12 @@ https://api-docs.pro.apex.exchange/#introduction
 
 """
 
+import asyncio
 import time
 import hmac
 import json
 import logging
+import aiohttp
 import requests
 
 from web3 import Web3
@@ -307,9 +309,9 @@ class HTTP:
                 return True
         return True
 
-    def configs(self, **kwargs):
+    async def configs(self, **kwargs):
         suffix = URL_SUFFIX + "/v1/symbols"
-        configs = self._submit_request(
+        configs = await self._submit_request(
             method='GET',
             path=self.endpoint + suffix
         )
@@ -318,9 +320,9 @@ class HTTP:
         self.starkeySigner = SignOnboardingAction(self.eth_signer, self.env_id)
         return configs
 
-    def configs_v2(self, **kwargs):
+    async def configs_v2(self, **kwargs):
         suffix = URL_SUFFIX + "/v2/symbols"
-        configs = self._submit_request(
+        configs = await self._submit_request(
             method='GET',
             path=self.endpoint + suffix
         )
@@ -331,30 +333,14 @@ class HTTP:
         self.starkeySigner = SignOnboardingAction(self.eth_signer, self.env_id)
         return configs
 
-    def _submit_request(self, method=None, path=None, query=None, headers=None):
-        """
-        Submits the request to the API.
-
-        Notes
-        -------------------
-        We use the params argument for the GET method, and data argument for
-        the POST method. Dicts passed to the data argument must be
-        JSONified prior to submitting request.
-
-        """
-
+    async def _submit_request(self, method=None, path=None, query=None, headers=None):
         if query is None:
             query = {}
 
-        # Store original recv_window.
-        recv_window = self.recv_window
-
-        # Send request and return headers with body. Retry if failed.
         retries_attempted = self.max_retries
-        req_params = None
+        req_params = {}
 
         while True:
-
             retries_attempted -= 1
             if retries_attempted < 0:
                 raise FailedRequestError(
@@ -366,64 +352,40 @@ class HTTP:
 
             retries_remaining = f'{retries_attempted} retries remain.'
 
-            # Define parameters and log the request.
             if query is not None:
-                req_params = {k: v for k, v in query.items() if
-                              v is not None}
+                req_params = {k: v for k, v in query.items() if v is not None}
 
-            else:
-                req_params = {}
-
-            # Log the request.
             if self.log_requests:
                 self.logger.debug(f'Request -> {method} {path}: {req_params}')
 
-            # Prepare request; use 'params' for GET and 'data' for POST.
-            if method == 'GET':
-                r = self.client.prepare_request(
-                    requests.Request(method, path, params=req_params,
-                                     headers=headers)
-                )
-            elif method == 'POST':
-                r = self.client.prepare_request(
-                    requests.Request(method, path,
-                                     data=req_params,
-                                     headers=headers)
-                )
+            async with aiohttp.ClientSession() as session:
+                try:
+                    if method == 'GET':
+                        async with session.get(path, params=req_params, headers=headers) as response:
+                            return await self._handle_response(response, retries_remaining)
+                    elif method == 'POST':
+                        async with session.post(path, data=req_params, headers=headers) as response:
+                            return await self._handle_response(response, retries_remaining)
+                except (aiohttp.ClientError, asyncio.TimeoutError) as e:
+                    if self.force_retry:
+                        self.logger.error(f'{e}. {retries_remaining}')
+                        await asyncio.sleep(self.retry_delay)
+                        continue
+                    else:
+                        raise e
 
-            # Attempt the request.
-            try:
-                s = self.client.send(r, timeout=self.timeout)
-
-            # If requests fires an error, retry.
-            except (
-                    requests.exceptions.ReadTimeout,
-                    requests.exceptions.SSLError,
-                    requests.exceptions.ConnectionError
-            ) as e:
-                if self.force_retry:
-                    self.logger.error(f'{e}. {retries_remaining}')
-                    time.sleep(self.retry_delay)
-                    continue
-                else:
-                    raise e
-
-            # Convert response to dictionary, or raise if requests error.
-            try:
-                s_json = s.json()
-
-            # If we have trouble converting, handle the error and retry.
-            except JSONDecodeError as e:
-                if self.force_retry:
-                    self.logger.error(f'{e}. {retries_remaining}')
-                    time.sleep(self.retry_delay)
-                    continue
-                else:
-                    raise FailedRequestError(
-                        request=f'{method} {path}: {req_params}',
-                        message='Conflict. Could not decode JSON.',
-                        status_code=409,
-                        time=dt.utcnow().strftime("%H:%M:%S")
-                    )
+    async def _handle_response(self, response: aiohttp.ClientResponse, retries_remaining):
+        try:
+            response_json = await response.json()
+            return response_json
+        except JSONDecodeError as e:
+            if self.force_retry:
+                self.logger.error(f'{e}. {retries_remaining}')
+                await asyncio.sleep(self.retry_delay)
             else:
-                return s_json
+                raise FailedRequestError(
+                    request=f'{response.method} {response.url}: {response.request_info}',
+                    message='Conflict. Could not decode JSON.',
+                    status_code=409,
+                    time=dt.utcnow().strftime("%H:%M:%S")
+                )
