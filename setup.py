@@ -39,7 +39,7 @@ setup(
         'dateparser==1.0.0',
         'ecdsa>=0.17.0',
         'eth_keys',
-        'eth-account>=0.4.0,<0.6.0',
+        'eth-account>=0.4.0',
         'mpmath==1.0.0',
         'pytest>=4.4.0,<5.0.0',
         'requests-mock==1.6.0',
