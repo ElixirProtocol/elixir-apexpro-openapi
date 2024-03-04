@@ -64,7 +64,7 @@ def remove_nones(original):
 def calc_bind_owner_key_sig_hash(star_key_hex, owner_key):
     data_bytes = "UserRegistration:"
     owner_key_bytes = bytes.fromhex(strip_hex_prefix(owner_key))
-    data = Web3.solidityKeccak(
+    data = Web3.solidity_keccak(
         [
             'string',
             'bytes20',

@@ -117,7 +117,7 @@ class SignOffChainAction(object):
         }
 
     def get_eip712_hash(self, struct_hash):
-        return Web3.solidityKeccak(
+        return Web3.solidity_keccak(
             [
                 'bytes2',
                 'bytes32',
@@ -131,7 +131,7 @@ class SignOffChainAction(object):
         )
 
     def get_domain_hash(self):
-        return Web3.solidityKeccak(
+        return Web3.solidity_keccak(
             [
                 'bytes32',
                 'bytes32',
