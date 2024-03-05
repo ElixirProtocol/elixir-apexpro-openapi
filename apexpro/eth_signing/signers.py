@@ -59,8 +59,6 @@ class SignWithHSM(Signer):
     ):
         raw_signature = await self._hsm.sign(message_hash)
         ethereum_signature, recovered_address, _ = self._hsm.adjust_and_recover_signature(message_hash, raw_signature)
-        print("ethereum_signature: ", ethereum_signature.hex())
-        print("recovered address: ", recovered_address)
         typed_signature = util.create_typed_signature(
             ethereum_signature.hex(),
             SIGNATURE_TYPE_PERSONAL,
