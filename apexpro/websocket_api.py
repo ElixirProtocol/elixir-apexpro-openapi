@@ -139,3 +139,7 @@ class WebSocket(_ApexWebSocketManager):
         """
         topic = "ws_accounts_v2"
         self._ws_private_subscribe(topic=topic, callback=callback)
+
+    def close(self):
+        self.ws_private.exit()
+        self.ws_public.exit()

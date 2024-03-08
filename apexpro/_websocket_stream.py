@@ -1,5 +1,6 @@
 import base64
 import hashlib
+import asyncio
 
 import websocket
 import threading
@@ -218,8 +219,9 @@ class _WebSocketManager:
 
 
 class _ApexWebSocketManager(_WebSocketManager):
-    def __init__(self, **kwargs):
+    def __init__(self, event_loop, **kwargs):
         super().__init__(self._handle_incoming_message, **kwargs)
+        self.event_loop = event_loop
 
     def subscribe(self, sendStr, topic, callback):
         """
@@ -284,7 +286,8 @@ class _ApexWebSocketManager(_WebSocketManager):
         else:  # Standard topic push
                 if message.get('topic') is not None and self.callback_directory.get(message.get('topic')) is not None:
                     callback_function = self.callback_directory[message['topic'] ]
-                    callback_function(message)
+                    coroutine = callback_function(message)
+                    asyncio.run_coroutine_threadsafe(coroutine, loop=self.event_loop)
 
     def _set_callback(self, topic, callback_function):
         self.callback_directory[topic] = callback_function
@@ -324,15 +327,6 @@ def _find_index(source, target, key):
 
 
 def _make_public_kwargs(private_kwargs):
-    public_kwargs = copy.deepcopy(private_kwargs)
+    public_kwargs = copy.copy(private_kwargs)
     public_kwargs.pop("api_key_credentials", "")
     return public_kwargs
-
-
-
-
-
-
-
-
-
