@@ -34,6 +34,23 @@ class HsmSession:
                 raise
 
     @classmethod
+    async def get_public_key_raw(cls, key_label):
+        try:
+            public_key_template = [
+                (PyKCS11.CKA_CLASS, PyKCS11.CKO_PUBLIC_KEY),
+                (PyKCS11.CKA_KEY_TYPE, PyKCS11.CKK_ECDSA),
+                (PyKCS11.CKA_LABEL, key_label),
+            ]
+
+            public_key = cls._session.findObjects(public_key_template)[0] 
+            ec_point = cls._session.getAttributeValue(public_key, [PyKCS11.CKA_EC_POINT])[0]
+            return ec_point
+        except PyKCS11.PyKCS11Error as e:
+            logging.info(f"[HSM] Error al obtener la clave pública: {e}")
+        except Exception as e:
+            logging.error(f"[HSM] Error inesperado: {e}")
+
+    @classmethod
     async def close_session(cls):
         async with cls._lock:
             if cls._session is None:

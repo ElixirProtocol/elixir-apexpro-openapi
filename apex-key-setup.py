@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+from eth_keys.datatypes import PublicKey
 from apexpro.http_private import HttpPrivate
 from apexpro.constants import (
     APEX_HTTP_TEST,
@@ -14,20 +15,22 @@ from hsm_session import HsmSession
 from apex_hsm import APEXHSMSession
 
 # HSM constants
-HSM_PIN = ""
-HSM_ADDRESS = ""
-HSM_KEY_LABEL = ""
-LIB_PATH = ""
+HSM_PIN = "user:$^94o7u!5qGKIAt&MrON@jq1o$QeaSUe"
+LIB_PATH = "/opt/cloudhsm/lib/libcloudhsm_pkcs11.so"
 
-
-async def setup(stark_private_key=None, use_hsm=False, ethereum_private_key=None):
+async def setup(stark_private_key=None, use_hsm=False, ethereum_private_key=None, hsm_label=None):
     if use_hsm:
         await HsmSession.start_session(hsm_pin=HSM_PIN, lib_path=LIB_PATH)
 
+        public_key_raw = await HsmSession.get_public_key_raw(hsm_label)
+        pub_key = PublicKey(bytes(public_key_raw[3:]))
+
+        ethereum_address = pub_key.to_checksum_address()
+
         hsm_instance = APEXHSMSession(
             hsm_pin=HSM_PIN,
-            address=HSM_ADDRESS,
-            hsm_key_label=HSM_KEY_LABEL,
+            address=ethereum_address,
+            hsm_key_label=hsm_label,
             lib_path=LIB_PATH,
         )
 
@@ -90,6 +93,8 @@ async def setup(stark_private_key=None, use_hsm=False, ethereum_private_key=None
         "passphrase": passphrase,
     }
 
+    print(f"Ethereum Address: {hsm_instance.address if use_hsm else client.default_address}")
+
     print("STARK Key Pair:")
     print(stark_key_pair)
 
@@ -109,16 +114,19 @@ if __name__ == "__main__":
     parser.add_argument(
         "--eth-private-key", type=str, help="Plain ETH private key to sign"
     )
+    parser.add_argument(
+        "--hsm-label", type=str, help="Label of the HSM key in the HSM", required=True
+    )
 
     args = parser.parse_args()
 
     if args.use_hsm:
-        asyncio.run(setup(stark_private_key=args.stark_private_key, use_hsm=True))
+        asyncio.run(setup(stark_private_key=args.stark_private_key, use_hsm=True, hsm_label=args.hsm_label))
     elif args.eth_private_key:
         asyncio.run(
             setup(
                 ethereum_private_key=args.eth_private_key,
-                stark_private_key=args.stark_private_key,
+                stark_private_key=args.stark_private_key
             )
         )
     else:
