@@ -71,7 +71,7 @@ async def setup(stark_private_key=None, use_hsm=False, ethereum_private_key=None
     )
 
     regRes = await client.register_user_v2(
-        token="USDT",
+        token="USDC",
         nonce=nonceRes["data"]["nonce"],
         starkKey=stark_key_pair["public_key"],
         stark_public_key_y_coordinate=stark_key_pair["public_key_y_coordinate"],
@@ -121,7 +121,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.use_hsm:
-        asyncio.run(setup(stark_private_key=args.stark_private_key, use_hsm=True, hsm_label=args.hsm_label))
+        asyncio.run(setup(
+            stark_private_key=args.stark_private_key,
+            use_hsm=True,
+            hsm_label=args.hsm_label)
+        )
     elif args.eth_private_key:
         asyncio.run(
             setup(
