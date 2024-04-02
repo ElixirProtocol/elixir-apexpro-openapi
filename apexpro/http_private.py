@@ -446,6 +446,21 @@ class HttpPrivate(HttpPublic):
             endpoint=path,
             params=kwargs
         )
+
+    async def can_withdrawal_balance_v2(self, **kwargs):
+        """"
+        GET Retrieve User Withdrawal List.
+        :param kwargs: See
+        https://api-docs.pro.apex.exchange/#privateapi-get-retrieve-user-withdrawal-list
+        :returns: Request results as dictionary.
+        """
+
+        path = URL_SUFFIX + "/v2/can-withdrawal-balance"
+        return await self._get(
+            endpoint=path,
+            params=kwargs
+        )
+
     async def uncommon_withdraw_fee(self, **kwargs):
         """"
         GET Fast & Cross-Chain Withdrawal Fees.
