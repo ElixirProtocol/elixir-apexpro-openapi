@@ -7,6 +7,7 @@ from apexpro.constants import (
     NETWORKID_TEST,
     APEX_HTTP_MAIN,
     NETWORKID_MAIN,
+    REGISTER_ENVID_MAIN,
     REGISTER_ENVID_TEST,
 )
 from apexpro.starkex.helpers import private_key_to_public_key_pair_hex
@@ -18,7 +19,35 @@ from apex_hsm import APEXHSMSession
 HSM_PIN = "user:$^94o7u!5qGKIAt&MrON@jq1o$QeaSUe"
 LIB_PATH = "/opt/cloudhsm/lib/libcloudhsm_pkcs11.so"
 
-async def setup(stark_private_key=None, use_hsm=False, ethereum_private_key=None, hsm_label=None):
+ELIXIR_APEX_MANAGER_MAPPING = {
+    "mainnet": "",
+    "testnet": "0x9EA81Cb5FC3397b86A46B56D71c08c8469Df5e70",
+}
+
+NETWORK_MAPPING = {
+    "mainnet": {
+        "endpoint": APEX_HTTP_MAIN,
+        "networkId": NETWORKID_MAIN,
+        "envId": REGISTER_ENVID_MAIN
+    },
+    "testnet": {
+        "endpoint": APEX_HTTP_TEST,
+        "networkId": NETWORKID_TEST,
+        "envId": REGISTER_ENVID_TEST
+    }
+}
+
+async def setup(
+        stark_private_key=None,
+        use_hsm=False,
+        ethereum_private_key=None,
+        hsm_label=None,
+        network="testnet",
+    ):
+    network_id = NETWORK_MAPPING[network]["networkId"]
+    env_id = NETWORK_MAPPING[network]["envId"]
+    endpoint = NETWORK_MAPPING[network]["endpoint"]
+
     if use_hsm:
         await HsmSession.start_session(hsm_pin=HSM_PIN, lib_path=LIB_PATH)
 
@@ -35,16 +64,16 @@ async def setup(stark_private_key=None, use_hsm=False, ethereum_private_key=None
         )
 
         client = HttpPrivate(
-            APEX_HTTP_TEST,
-            network_id=NETWORKID_TEST,
-            env_id=REGISTER_ENVID_TEST,
+            endpoint=endpoint,
+            network_id=network_id,
+            env_id=env_id,
             hsm_instance=hsm_instance,
         )
     elif ethereum_private_key is not None:
         client = HttpPrivate(
-            APEX_HTTP_TEST,
-            network_id=NETWORKID_TEST,
-            env_id=REGISTER_ENVID_TEST,
+            endpoint=endpoint,
+            network_id=network_id,
+            env_id=env_id,
             eth_private_key=ethereum_private_key,
         )
     else:
@@ -67,7 +96,7 @@ async def setup(stark_private_key=None, use_hsm=False, ethereum_private_key=None
     nonceRes = await client.generate_nonce(
         starkKey=stark_key_pair["public_key"],
         ethAddress=client.default_address,
-        chainId=NETWORKID_TEST,
+        chainId=network_id,
     )
 
     regRes = await client.register_user_v2(
@@ -76,6 +105,7 @@ async def setup(stark_private_key=None, use_hsm=False, ethereum_private_key=None
         starkKey=stark_key_pair["public_key"],
         stark_public_key_y_coordinate=stark_key_pair["public_key_y_coordinate"],
         ethereum_address=client.default_address,
+        eth_mul_address=ELIXIR_APEX_MANAGER_MAPPING[network],
     )
 
     if "data" not in regRes:
@@ -118,19 +148,27 @@ if __name__ == "__main__":
         "--hsm-label", type=str, help="Label of the HSM key in the HSM", required=True
     )
 
+    parser.add_argument(
+        "--network", type=str, default="testnet", help="Network ID", required=True, choices=["testnet", "mainnet"]
+    )
+
     args = parser.parse_args()
 
     if args.use_hsm:
-        asyncio.run(setup(
-            stark_private_key=args.stark_private_key,
-            use_hsm=True,
-            hsm_label=args.hsm_label)
+        asyncio.run(
+            setup(
+                stark_private_key=args.stark_private_key,
+                use_hsm=True,
+                hsm_label=args.hsm_label,
+                network=args.network
+            )
         )
     elif args.eth_private_key:
         asyncio.run(
             setup(
                 ethereum_private_key=args.eth_private_key,
-                stark_private_key=args.stark_private_key
+                stark_private_key=args.stark_private_key,
+                network=args.network
             )
         )
     else:
