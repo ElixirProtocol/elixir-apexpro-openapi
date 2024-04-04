@@ -21,7 +21,7 @@ LIB_PATH = "/opt/cloudhsm/lib/libcloudhsm_pkcs11.so"
 
 ELIXIR_APEX_MANAGER_MAPPING = {
     "mainnet": "",
-    "testnet": "0x9EA81Cb5FC3397b86A46B56D71c08c8469Df5e70",
+    "testnet": "0xFf80F9F210c75199491bcFb086fed78AA5af87b2",
 }
 
 NETWORK_MAPPING = {
