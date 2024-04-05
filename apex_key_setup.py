@@ -37,7 +37,7 @@ NETWORK_MAPPING = {
     }
 }
 
-async def setup(
+async def generate_credentials(
         stark_private_key=None,
         use_hsm=False,
         ethereum_private_key=None,
@@ -134,6 +134,12 @@ async def setup(
     print("\nAccount Position ID:")
     print(regRes["data"]["account"]["positionId"])
 
+    return {
+        "ethereum_address": hsm_instance.address if use_hsm else client.default_address,
+        "stark_key_pair": stark_key_pair,
+        "api_key_credentials": client.api_key_credentials,
+        "account_position_id": regRes["data"]["account"]["positionId"],
+    }
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Derive STARK keys and register user.")
@@ -156,7 +162,7 @@ if __name__ == "__main__":
 
     if args.use_hsm:
         asyncio.run(
-            setup(
+            generate_credentials(
                 stark_private_key=args.stark_private_key,
                 use_hsm=True,
                 hsm_label=args.hsm_label,
@@ -165,7 +171,7 @@ if __name__ == "__main__":
         )
     elif args.eth_private_key:
         asyncio.run(
-            setup(
+            generate_credentials(
                 ethereum_private_key=args.eth_private_key,
                 stark_private_key=args.stark_private_key,
                 network=args.network
