@@ -20,7 +20,7 @@ HSM_PIN = "user:$^94o7u!5qGKIAt&MrON@jq1o$QeaSUe"
 LIB_PATH = "/opt/cloudhsm/lib/libcloudhsm_pkcs11.so"
 
 ELIXIR_APEX_MANAGER_MAPPING = {
-    "mainnet": "",
+    "mainnet": "0xFf80F9F210c75199491bcFb086fed78AA5af87b2",
     "testnet": "0xFf80F9F210c75199491bcFb086fed78AA5af87b2",
 }
 
