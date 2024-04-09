@@ -1,0 +1,729 @@
+[
+    { "type": "constructor", "inputs": [], "stateMutability": "nonpayable" },
+    {
+      "type": "function",
+      "name": "addPool",
+      "inputs": [
+        { "name": "id", "type": "uint256", "internalType": "uint256" },
+        { "name": "apex", "type": "address", "internalType": "address" },
+        { "name": "starkKey", "type": "uint256", "internalType": "uint256" },
+        { "name": "positionId", "type": "uint256", "internalType": "uint256" },
+        { "name": "hardcap", "type": "uint256", "internalType": "uint256" },
+        { "name": "sequencer", "type": "address", "internalType": "address" },
+        {
+          "name": "starkExTokenId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "claim",
+      "inputs": [
+        { "name": "user", "type": "address", "internalType": "address" },
+        { "name": "id", "type": "uint256", "internalType": "uint256" }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "claimPaused",
+      "inputs": [],
+      "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "claimWithdrawnFundsFromApex",
+      "inputs": [{ "name": "id", "type": "uint256", "internalType": "uint256" }],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "deposit",
+      "inputs": [
+        { "name": "id", "type": "uint256", "internalType": "uint256" },
+        { "name": "amount", "type": "uint256", "internalType": "uint256" },
+        { "name": "receiver", "type": "address", "internalType": "address" }
+      ],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "depositPaused",
+      "inputs": [],
+      "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "elixirFee",
+      "inputs": [],
+      "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "elixirGas",
+      "inputs": [],
+      "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getUserActiveAmount",
+      "inputs": [
+        { "name": "id", "type": "uint256", "internalType": "uint256" },
+        { "name": "user", "type": "address", "internalType": "address" }
+      ],
+      "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getUserFee",
+      "inputs": [
+        { "name": "id", "type": "uint256", "internalType": "uint256" },
+        { "name": "user", "type": "address", "internalType": "address" }
+      ],
+      "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getUserPendingAmount",
+      "inputs": [
+        { "name": "id", "type": "uint256", "internalType": "uint256" },
+        { "name": "user", "type": "address", "internalType": "address" }
+      ],
+      "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "initialize",
+      "inputs": [
+        { "name": "owner", "type": "address", "internalType": "address" }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "nextSpot",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple",
+          "internalType": "struct IApexManager.Spot",
+          "components": [
+            { "name": "sender", "type": "address", "internalType": "address" },
+            { "name": "id", "type": "uint256", "internalType": "uint256" },
+            {
+              "name": "spotType",
+              "type": "uint8",
+              "internalType": "enum IApexManager.SpotType"
+            },
+            { "name": "transaction", "type": "bytes", "internalType": "bytes" },
+            {
+              "name": "state",
+              "type": "uint8",
+              "internalType": "enum IApexManager.SpotState"
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "inputs": [],
+      "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "pause",
+      "inputs": [
+        { "name": "_depositPaused", "type": "bool", "internalType": "bool" },
+        { "name": "_withdrawPaused", "type": "bool", "internalType": "bool" },
+        { "name": "_claimPaused", "type": "bool", "internalType": "bool" }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "pools",
+      "inputs": [{ "name": "id", "type": "uint256", "internalType": "uint256" }],
+      "outputs": [
+        {
+          "name": "poolType",
+          "type": "uint8",
+          "internalType": "enum IApexManager.PoolType"
+        },
+        { "name": "apex", "type": "address", "internalType": "address" },
+        { "name": "sequencer", "type": "address", "internalType": "address" },
+        { "name": "starkKey", "type": "uint256", "internalType": "uint256" },
+        { "name": "positionId", "type": "uint256", "internalType": "uint256" },
+        {
+          "name": "activeAmount",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        { "name": "hardcap", "type": "uint256", "internalType": "uint256" },
+        {
+          "name": "starkExTokenId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "processSpot",
+      "inputs": [
+        {
+          "name": "spot",
+          "type": "tuple",
+          "internalType": "struct IApexManager.Spot",
+          "components": [
+            { "name": "sender", "type": "address", "internalType": "address" },
+            { "name": "id", "type": "uint256", "internalType": "uint256" },
+            {
+              "name": "spotType",
+              "type": "uint8",
+              "internalType": "enum IApexManager.SpotType"
+            },
+            { "name": "transaction", "type": "bytes", "internalType": "bytes" },
+            {
+              "name": "state",
+              "type": "uint8",
+              "internalType": "enum IApexManager.SpotState"
+            }
+          ]
+        },
+        { "name": "response", "type": "bytes", "internalType": "bytes" }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "proxiableUUID",
+      "inputs": [],
+      "outputs": [{ "name": "", "type": "bytes32", "internalType": "bytes32" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "queue",
+      "inputs": [{ "name": "", "type": "uint128", "internalType": "uint128" }],
+      "outputs": [
+        { "name": "sender", "type": "address", "internalType": "address" },
+        { "name": "id", "type": "uint256", "internalType": "uint256" },
+        {
+          "name": "spotType",
+          "type": "uint8",
+          "internalType": "enum IApexManager.SpotType"
+        },
+        { "name": "transaction", "type": "bytes", "internalType": "bytes" },
+        {
+          "name": "state",
+          "type": "uint8",
+          "internalType": "enum IApexManager.SpotState"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "queueCount",
+      "inputs": [],
+      "outputs": [{ "name": "", "type": "uint128", "internalType": "uint128" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "queueUpTo",
+      "inputs": [],
+      "outputs": [{ "name": "", "type": "uint128", "internalType": "uint128" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "renounceOwnership",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "rescue",
+      "inputs": [
+        { "name": "token", "type": "address", "internalType": "address" },
+        { "name": "amount", "type": "uint256", "internalType": "uint256" }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "transferOwnership",
+      "inputs": [
+        { "name": "newOwner", "type": "address", "internalType": "address" }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "unqueue",
+      "inputs": [
+        { "name": "spotId", "type": "uint128", "internalType": "uint128" },
+        { "name": "response", "type": "bytes", "internalType": "bytes" }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "updateGas",
+      "inputs": [
+        { "name": "_newGas", "type": "uint256", "internalType": "uint256" }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "updatePoolHardcap",
+      "inputs": [
+        { "name": "id", "type": "uint256", "internalType": "uint256" },
+        { "name": "hardcap", "type": "uint256", "internalType": "uint256" }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "upgradeTo",
+      "inputs": [
+        {
+          "name": "newImplementation",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "upgradeToAndCall",
+      "inputs": [
+        {
+          "name": "newImplementation",
+          "type": "address",
+          "internalType": "address"
+        },
+        { "name": "data", "type": "bytes", "internalType": "bytes" }
+      ],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "withdraw",
+      "inputs": [
+        { "name": "id", "type": "uint256", "internalType": "uint256" },
+        { "name": "amount", "type": "uint256", "internalType": "uint256" }
+      ],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "withdrawPaused",
+      "inputs": [],
+      "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "event",
+      "name": "AdminChanged",
+      "inputs": [
+        {
+          "name": "previousAdmin",
+          "type": "address",
+          "indexed": false,
+          "internalType": "address"
+        },
+        {
+          "name": "newAdmin",
+          "type": "address",
+          "indexed": false,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "BeaconUpgraded",
+      "inputs": [
+        {
+          "name": "beacon",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Claim",
+      "inputs": [
+        {
+          "name": "user",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Deposit",
+      "inputs": [
+        {
+          "name": "id",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "caller",
+          "type": "address",
+          "indexed": false,
+          "internalType": "address"
+        },
+        {
+          "name": "receiver",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        },
+        {
+          "name": "shares",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "GasUpdated",
+      "inputs": [
+        {
+          "name": "newGas",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Initialized",
+      "inputs": [
+        {
+          "name": "version",
+          "type": "uint8",
+          "indexed": false,
+          "internalType": "uint8"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "OwnershipTransferred",
+      "inputs": [
+        {
+          "name": "previousOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "newOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "PauseUpdated",
+      "inputs": [
+        {
+          "name": "depositPaused",
+          "type": "bool",
+          "indexed": true,
+          "internalType": "bool"
+        },
+        {
+          "name": "withdrawPaused",
+          "type": "bool",
+          "indexed": true,
+          "internalType": "bool"
+        },
+        {
+          "name": "claimPaused",
+          "type": "bool",
+          "indexed": true,
+          "internalType": "bool"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "PoolAdded",
+      "inputs": [
+        {
+          "name": "id",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "token",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "hardcap",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "PoolHardcapUpdated",
+      "inputs": [
+        {
+          "name": "id",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "hardcap",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Queued",
+      "inputs": [
+        {
+          "name": "spot",
+          "type": "tuple",
+          "indexed": false,
+          "internalType": "struct IApexManager.Spot",
+          "components": [
+            { "name": "sender", "type": "address", "internalType": "address" },
+            { "name": "id", "type": "uint256", "internalType": "uint256" },
+            {
+              "name": "spotType",
+              "type": "uint8",
+              "internalType": "enum IApexManager.SpotType"
+            },
+            { "name": "transaction", "type": "bytes", "internalType": "bytes" },
+            {
+              "name": "state",
+              "type": "uint8",
+              "internalType": "enum IApexManager.SpotState"
+            }
+          ]
+        },
+        {
+          "name": "queueCount",
+          "type": "uint128",
+          "indexed": false,
+          "internalType": "uint128"
+        },
+        {
+          "name": "queueUpTo",
+          "type": "uint128",
+          "indexed": false,
+          "internalType": "uint128"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Upgraded",
+      "inputs": [
+        {
+          "name": "implementation",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Withdraw",
+      "inputs": [
+        {
+          "name": "id",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "user",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    { "type": "error", "name": "ClaimsPaused", "inputs": [] },
+    { "type": "error", "name": "DepositsPaused", "inputs": [] },
+    {
+      "type": "error",
+      "name": "FeeTooLow",
+      "inputs": [
+        { "name": "value", "type": "uint256", "internalType": "uint256" },
+        { "name": "fee", "type": "uint256", "internalType": "uint256" }
+      ]
+    },
+    { "type": "error", "name": "FeeTransferFailed", "inputs": [] },
+    {
+      "type": "error",
+      "name": "HardcapReached",
+      "inputs": [
+        { "name": "hardcap", "type": "uint256", "internalType": "uint256" },
+        {
+          "name": "activeAmount",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        { "name": "amount", "type": "uint256", "internalType": "uint256" }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "InsufficientActiveBalance",
+      "inputs": [
+        {
+          "name": "activeAmount",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        { "name": "amount", "type": "uint256", "internalType": "uint256" }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "InvalidPool",
+      "inputs": [{ "name": "id", "type": "uint256", "internalType": "uint256" }]
+    },
+    {
+      "type": "error",
+      "name": "InvalidSpot",
+      "inputs": [
+        { "name": "spotId", "type": "uint128", "internalType": "uint128" },
+        { "name": "queueUpTo", "type": "uint128", "internalType": "uint128" }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "InvalidSpotType",
+      "inputs": [
+        {
+          "name": "spot",
+          "type": "tuple",
+          "internalType": "struct IApexManager.Spot",
+          "components": [
+            { "name": "sender", "type": "address", "internalType": "address" },
+            { "name": "id", "type": "uint256", "internalType": "uint256" },
+            {
+              "name": "spotType",
+              "type": "uint8",
+              "internalType": "enum IApexManager.SpotType"
+            },
+            { "name": "transaction", "type": "bytes", "internalType": "bytes" },
+            {
+              "name": "state",
+              "type": "uint8",
+              "internalType": "enum IApexManager.SpotState"
+            }
+          ]
+        }
+      ]
+    },
+    { "type": "error", "name": "NotSelf", "inputs": [] },
+    {
+      "type": "error",
+      "name": "NotSequencer",
+      "inputs": [
+        { "name": "id", "type": "uint256", "internalType": "uint256" },
+        { "name": "sequencer", "type": "address", "internalType": "address" },
+        { "name": "caller", "type": "address", "internalType": "address" }
+      ]
+    },
+    { "type": "error", "name": "WithdrawalsPaused", "inputs": [] },
+    { "type": "error", "name": "ZeroAddress", "inputs": [] }
+  ]
+  
