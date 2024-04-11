@@ -16,6 +16,10 @@ async def setup():
         api_key_credentials=credentials,
     )
 
+    account_data = await client.get_account_balance_v2()
+    print("eq", account_data["data"]["usdcBalance"]["totalEquityValue"])
+    print("avl bal", account_data["data"]["usdcBalance"]["availableBalance"])
+
     # Fetching and printing open orders
     open_orders_data = await client.open_orders_v2(token="USDC")
     open_orders = open_orders_data['data']

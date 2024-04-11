@@ -108,8 +108,12 @@ class _WebSocketManager:
         Open websocket in a thread.
         """
         self.private_websocket = True if url.__contains__("private") else False
-
         time_stamp = generate_now()
+
+        # If a websocket connection is already established, close it before creating a new one
+        if self.ws and hasattr(self.ws, 'sock') and self.ws.sock and self.ws.sock.connected:
+            self.exit()
+
         self.ws = websocket.WebSocketApp(
             url=url + '&timestamp=' + str(time_stamp),
             on_message=lambda ws, msg: self._on_message(msg),
@@ -117,6 +121,10 @@ class _WebSocketManager:
             on_open=self._on_open(),
             on_error=lambda ws, err: self._on_error(err)
         )
+
+        # Close existing WebSocket connection and join the thread before creating a new one
+        if hasattr(self, 'wst') and self.wst.is_alive():
+            self.exit()
 
         # Setup the thread running WebSocketApp.
         self.wst = threading.Thread(target=lambda: self.ws.run_forever(
@@ -211,12 +219,15 @@ class _WebSocketManager:
         """
         Closes the websocket connection.
         """
+        if self.ws:
+            self.ws.close()
+        while self.ws.sock and self.ws.sock.connected:
+            # Wait until the socket is closed
+            time.sleep(0.1)
 
-        self.ws.close()
-        while self.ws.sock:
-            continue
+        if self.wst and self.wst.is_alive():
+            self.wst.join()
         self.exited = True
-
 
 class _ApexWebSocketManager(_WebSocketManager):
     def __init__(self, event_loop, **kwargs):
