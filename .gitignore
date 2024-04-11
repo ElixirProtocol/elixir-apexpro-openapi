@@ -3,3 +3,4 @@ apexpro.egg-info
 build
 .venv
 .vscode
+credentials.json
