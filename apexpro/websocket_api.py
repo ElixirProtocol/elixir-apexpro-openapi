@@ -141,5 +141,7 @@ class WebSocket(_ApexWebSocketManager):
         self._ws_private_subscribe(topic=topic, callback=callback)
 
     def close(self):
-        self.ws_private.exit()
-        self.ws_public.exit()
+        if self.ws_private:
+            self.ws_private.exit()
+        if self.ws_public:
+            self.ws_public.exit()
