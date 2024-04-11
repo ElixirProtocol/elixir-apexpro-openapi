@@ -111,7 +111,7 @@ class _WebSocketManager:
         time_stamp = generate_now()
 
         # If a websocket connection is already established, close it before creating a new one
-        if self.ws and hasattr(self.ws, 'sock') and self.ws.sock and self.ws.sock.connected:
+        if hasattr(self, 'ws') and hasattr(self.ws, 'sock') and self.ws.sock and self.ws.sock.connected:
             self.exit()
 
         self.ws = websocket.WebSocketApp(
@@ -219,13 +219,13 @@ class _WebSocketManager:
         """
         Closes the websocket connection.
         """
-        if self.ws:
+        if hasattr(self, 'ws') and self.ws:
             self.ws.close()
-        while self.ws.sock and self.ws.sock.connected:
-            # Wait until the socket is closed
-            time.sleep(0.1)
+            while self.ws.sock and self.ws.sock.connected:
+                # Wait until the socket is closed
+                time.sleep(0.1)
 
-        if self.wst and self.wst.is_alive():
+        if hasattr(self, 'wst') and self.wst and self.wst.is_alive():
             self.wst.join()
         self.exited = True
 
