@@ -38,7 +38,6 @@ async def setup():
     )
 
     nonce = w3.eth.get_transaction_count(ethereum_address)
-    print(nonce)
 
     tx_data_sample_bytes = b''
     queue_id = 13
