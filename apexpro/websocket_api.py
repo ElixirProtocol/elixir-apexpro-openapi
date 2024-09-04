@@ -50,6 +50,7 @@ class WebSocket(_ApexWebSocketManager):
                 "args": [arg]
             }
         topicStr = json.dumps(topic, sort_keys=True, separators=(",", ":"))
+        print(topicStr)
         self._ws_public_subscribe(topicStr, arg, callback)
     def unsub_depth_topic_stream(self, callback, arg):
         """
